@@ -18,16 +18,17 @@ build:
     fi
     echo ":: Found $WASM_FILE"
 
-    # Copy to project root for index.html to find
-    cp "$WASM_FILE" Main.wasm
+    # Copy to project root as bin.wasm (what index.js expects)
+    cp "$WASM_FILE" bin.wasm
 
-    # Run GHC's post-linker to extract JSFFI metadata and generate JS glue code.
-    # The post-linker reads ghc_wasm_jsffi custom sections from the .wasm file
-    # and emits a JS module that provides the import namespace for instantiation.
+    # Run GHC's post-linker to extract JSFFI metadata and generate JS glue.
+    # This reads ghc_wasm_jsffi custom sections from the .wasm and emits
+    # a JS module providing the import namespace for WASM instantiation.
     echo ":: Running post-linker..."
-    $(wasm32-wasi-ghc --print-libdir)/post-link.mjs -i Main.wasm -o Main.js
+    $(wasm32-wasi-ghc --print-libdir)/post-link.mjs \
+        --input bin.wasm --output ghc_wasm_jsffi.js
 
-    echo ":: Done! Main.wasm + Main.js ready."
+    echo ":: Done! bin.wasm + ghc_wasm_jsffi.js ready."
     echo ":: Run 'just serve' to test in browser."
 
 # Start a local dev server with live-reload
@@ -37,7 +38,11 @@ serve:
 # Build and serve
 dev: build serve
 
+# Update cabal package index (needed on first build)
+update:
+    wasm32-wasi-cabal update
+
 # Clean build artifacts
 clean:
-    rm -f Main.wasm Main.js
+    rm -f bin.wasm ghc_wasm_jsffi.js
     rm -rf dist-newstyle

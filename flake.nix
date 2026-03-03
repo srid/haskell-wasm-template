@@ -1,5 +1,5 @@
 {
-  description = "Template project for GHC WebAssembly backend with JSFFI browser integration";
+  description = "Template project for GHC WebAssembly backend with Reflex FRP";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -12,10 +12,8 @@
       systems = [ "x86_64-linux" "aarch64-linux" "aarch64-darwin" "x86_64-darwin" ];
 
       perSystem = { pkgs, system, ... }: let
-        # The ghc-wasm-meta default package bundles everything:
-        #   wasm32-wasi-ghc, wasm32-wasi-cabal, wasmtime, wasi-sdk,
-        #   nodejs (for post-linker), binaryen, etc.
-        ghc-wasm = inputs.ghc-wasm-meta.packages.${system}.default;
+        # Use GHC 9.12 flavour — reflex ecosystem is tested against this version.
+        ghc-wasm = inputs.ghc-wasm-meta.packages.${system}.all_9_12;
       in {
         devShells.default = pkgs.mkShell {
           packages = [
