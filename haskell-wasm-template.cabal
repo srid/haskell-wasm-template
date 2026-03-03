@@ -1,19 +1,35 @@
-cabal-version: 2.4
+cabal-version: 3.0
 name:          haskell-wasm-template
 version:       0.1.0.0
-synopsis:      Template project for GHC WebAssembly with browser JSFFI
+synopsis:      Template project for GHC WebAssembly with Reflex FRP
 license:       MIT
 
 executable haskell-wasm-template
-  -- We use -no-hs-main because this is a WASI reactor module, not a
-  -- standalone executable. The entry point is exported via JSFFI and
-  -- called from JavaScript.
+  main-is:          Main.hs
+  other-modules:    App
+  hs-source-dirs:   app
+  default-language: GHC2021
+
+  default-extensions:
+    BlockArguments
+    LambdaCase
+    OverloadedStrings
+    RecordWildCards
+
+  build-depends:
+    , base
+    , ghc-experimental
+    , jsaddle
+    , jsaddle-wasm
+    , reflex
+    , reflex-dom-core
+    , text
+
+  -- Reactor module flags for WASM browser integration:
+  --   -no-hs-main       : No C main(); entry point is via JSFFI export
+  --   -mexec-model=reactor : WASI reactor (library-like, multiple entry points)
+  --   --export=hs_start  : Export our Haskell entry point to JavaScript
   ghc-options:
     -no-hs-main
     -optl-mexec-model=reactor
     "-optl-Wl,--export=hs_start"
-
-  main-is:             Main.hs
-  default-language:    GHC2021
-  default-extensions:  JavaScriptFFI
-  build-depends:       base, ghc-experimental

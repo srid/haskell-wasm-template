@@ -1,0 +1,12 @@
+packages: .
+
+-- Pin a known-good index state for reproducible builds
+index-state: 2025-10-11T08:08:38Z
+
+if arch(wasm32)
+  -- Required for TemplateHaskell. When using wasm32-wasi-cabal from
+  -- ghc-wasm-meta, this is superseded by the global cabal.config.
+  shared: True
+
+package aeson
+  flags: -ordered-keymap
