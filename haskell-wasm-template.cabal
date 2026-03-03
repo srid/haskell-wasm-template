@@ -1,0 +1,19 @@
+cabal-version: 2.4
+name:          haskell-wasm-template
+version:       0.1.0.0
+synopsis:      Template project for GHC WebAssembly with browser JSFFI
+license:       MIT
+
+executable haskell-wasm-template
+  -- We use -no-hs-main because this is a WASI reactor module, not a
+  -- standalone executable. The entry point is exported via JSFFI and
+  -- called from JavaScript.
+  ghc-options:
+    -no-hs-main
+    -optl-mexec-model=reactor
+    "-optl-Wl,--export=hs_start"
+
+  main-is:             Main.hs
+  default-language:    GHC2021
+  default-extensions:  JavaScriptFFI
+  build-depends:       base, ghc-experimental

@@ -1,0 +1,8 @@
+# Build artifacts
+dist-newstyle/
+Main.wasm
+Main.js
+
+# Nix / direnv
+result
+.direnv
